@@ -5,8 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Cliente;
-use Laravel\Sanctum\Sanctum;
-use App\Models\Funcionario;
+use Illuminate\Support\Facades\Http;
 
 class ClienteControllerTest extends TestCase
 {
@@ -16,14 +15,8 @@ class ClienteControllerTest extends TestCase
     {
         parent::setUp();
 
-        $funcionario = Funcionario::create([
-            'nome' => 'Administrador',
-            'cargo' => 'Gerente',
-            'usr' => 'admin',
-            'password' => bcrypt('123')
-        ]);
-
-        Sanctum::actingAs($funcionario);
+        Http::fake(['*' => Http::response(['valid' => true], 200)]);
+        $this->withToken('test-user-token');
     }
 
     /** @test */
