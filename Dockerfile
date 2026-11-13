@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     curl \
-    && docker-php-ext-install pdo pdo_mysql zip mbstring
+    && docker-php-ext-install pdo pdo_mysql zip mbstring \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb
 
 RUN curl -fsSL https://github.com/DataDog/dd-trace-php/releases/latest/download/datadog-setup.php -o /tmp/datadog-setup.php \
     && php /tmp/datadog-setup.php --php-bin=all \

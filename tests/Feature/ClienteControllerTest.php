@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Cliente;
+use App\Services\ClienteAuditTrail;
 use Illuminate\Support\Facades\Http;
 
 class ClienteControllerTest extends TestCase
@@ -17,6 +18,7 @@ class ClienteControllerTest extends TestCase
 
         Http::fake(['*' => Http::response(['valid' => true], 200)]);
         $this->withToken('test-user-token');
+        $this->app->instance(ClienteAuditTrail::class, \Mockery::mock(ClienteAuditTrail::class)->shouldIgnoreMissing());
     }
 
     /** @test */
@@ -125,5 +127,21 @@ class ClienteControllerTest extends TestCase
         $response->assertJsonPath('message', "Cliente id {$cliente->clientid} foi deletado com sucesso!");
 
         $this->assertDatabaseMissing('clientes', ['clientid' => $cliente->clientid]);
+    }
+
+    /** @test */
+    public function test_deve_registrar_evento_de_auditoria_apos_criar_cliente()
+    {
+        $auditTrail = \Mockery::mock(ClienteAuditTrail::class);
+        $auditTrail->shouldReceive('record')->once()->withArgs(function ($clientId, $event, $fields) {
+            return $clientId > 0 && $event === 'created' && in_array('email', $fields, true);
+        });
+        $this->app->instance(ClienteAuditTrail::class, $auditTrail);
+
+        $this->postJson('/api/clientes', [
+            'nome' => 'Gustavo Pirolo', 'email' => 'auditoria@example.com', 'cpf' => '99999999999',
+            'cep' => '06000000', 'endereco' => 'Rua de Osasco', 'estado' => 'SP',
+            'cidade' => 'Osasco', 'telefone' => '11999999999',
+        ])->assertCreated();
     }
 }

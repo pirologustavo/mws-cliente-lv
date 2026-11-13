@@ -17,6 +17,7 @@ Route::middleware(SharedServiceTokenAuth::class)->group(function () {
     Route::get('/clientes/buscarPorId/{id}', [ClienteController::class, 'buscarPorId']);
     Route::put('/clientes/atualizarCliente/{id}', [ClienteController::class, 'atualizarCliente']);
     Route::post('/clientes/deletarCliente/{id}', [ClienteController::class, 'deletarCliente']);
+    Route::get('/clientes/{id}/auditoria', [ClienteController::class, 'auditoria']);
 });
 
 Route::middleware(InternalServiceAuth::class)->prefix('internal/v1')->group(function () {
