@@ -53,6 +53,9 @@ Use PHP 8.4, PDO SQLite e PCOV. A cobertura inclui todo o diretório `app`; o pi
 
 O CI também executa `php vendor/bin/phpunit tests/Integration/ClienteAuditMongoTest.php` contra MongoDB real.
 
+## Resultado dos testes
+<img width="1464" height="756" alt="image" src="https://github.com/user-attachments/assets/24e66a24-ad31-4208-ac0e-83ffc80586af" />
+
 ## Documentação e APIs
 
 - [Arquitetura do serviço](docs/ARCHITECTURE.md).
